@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"os"
 
-	"github.com/bvisness/spall"
+	"github.com/bvisness/spall-go"
 )
 
 func main() {
