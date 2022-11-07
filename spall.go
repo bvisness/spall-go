@@ -79,16 +79,52 @@ func (e *Eventer) Begin(name string, when float64) {
 	C.free(unsafe.Pointer(nameC))
 }
 
+func (e *Eventer) BeginTid(name string, tid uint32, when float64) {
+	nameC := C.CString(name)
+	C.SpallTraceBeginLenTid(e.p.sp, e.sb, nameC, C.long(len(name)), C.uint(tid), C.double(when))
+	C.free(unsafe.Pointer(nameC))
+}
+
+func (e *Eventer) BeginTidPid(name string, tid, pid uint32, when float64) {
+	nameC := C.CString(name)
+	C.SpallTraceBeginLenTidPid(e.p.sp, e.sb, nameC, C.long(len(name)), C.uint(tid), C.uint(pid), C.double(when))
+	C.free(unsafe.Pointer(nameC))
+}
+
 func (e *Eventer) End(when float64) {
 	C.SpallTraceEnd(e.p.sp, e.sb, C.double(when))
+}
+
+func (e *Eventer) EndTid(tid uint32, when float64) {
+	C.SpallTraceEndTid(e.p.sp, e.sb, C.uint(tid), C.double(when))
+}
+
+func (e *Eventer) EndTidPid(tid, pid uint32, when float64) {
+	C.SpallTraceEndTidPid(e.p.sp, e.sb, C.uint(tid), C.uint(pid), C.double(when))
 }
 
 func (e *Eventer) BeginNow(name string) {
 	e.Begin(name, e.p.Now())
 }
 
+func (e *Eventer) BeginNowTid(tid uint32, name string) {
+	e.BeginTid(name, tid, e.p.Now())
+}
+
+func (e *Eventer) BeginNowTidPid(tid, pid uint32, name string) {
+	e.BeginTidPid(name, tid, pid, e.p.Now())
+}
+
 func (e *Eventer) EndNow() {
 	e.End(e.p.Now())
+}
+
+func (e *Eventer) EndNowTid(tid uint32) {
+	e.EndTid(tid, e.p.Now())
+}
+
+func (e *Eventer) EndNowTidPid(tid, pid uint32) {
+	e.EndTidPid(tid, pid, e.p.Now())
 }
 
 func (e *Eventer) Close() {
